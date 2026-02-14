@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="IP-Rechner">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>IP-Rechner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>IP-Rechner</h1>
+            <p class="subtitle">IPv4 Subnetz-Rechner</p>
+        </header>
+
+        <main>
+            <!-- Eingabe -->
+            <section class="card input-card">
+                <label for="ip-input">IP-Adresse</label>
+                <input type="text" id="ip-input" inputmode="numeric" placeholder="192.168.1.0" autocomplete="off">
+
+                <label for="cidr-select">Subnetzmaske / CIDR</label>
+                <select id="cidr-select"></select>
+
+                <div class="quick-examples">
+                    <span class="chip" data-ip="192.168.1.0" data-cidr="24">/24 Heim</span>
+                    <span class="chip" data-ip="10.0.0.0" data-cidr="8">Klasse A</span>
+                    <span class="chip" data-ip="172.16.0.0" data-cidr="12">Klasse B priv.</span>
+                    <span class="chip" data-ip="8.8.8.0" data-cidr="24">Google DNS</span>
+                </div>
+            </section>
+
+            <!-- Ergebnis -->
+            <section class="card result-card" id="result-card" style="display:none;">
+                <!-- Typ-Badge -->
+                <div class="ip-type-badge" id="ip-type-badge"></div>
+
+                <div class="result-grid">
+                    <div class="result-item">
+                        <span class="result-label">Netzadresse</span>
+                        <span class="result-value" id="res-network"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Broadcast</span>
+                        <span class="result-value" id="res-broadcast"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Erster Host</span>
+                        <span class="result-value" id="res-first-host"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Letzter Host</span>
+                        <span class="result-value" id="res-last-host"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Anzahl Hosts</span>
+                        <span class="result-value" id="res-host-count"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Subnetzmaske</span>
+                        <span class="result-value" id="res-subnet-mask"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Wildcard-Maske</span>
+                        <span class="result-value" id="res-wildcard"></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">IP-Klasse</span>
+                        <span class="result-value" id="res-class"></span>
+                    </div>
+                </div>
+
+                <!-- Binärdarstellung -->
+                <div class="binary-section">
+                    <h3>Binärdarstellung</h3>
+                    <div class="binary-row">
+                        <span class="binary-label">IP</span>
+                        <span class="binary-value" id="bin-ip"></span>
+                    </div>
+                    <div class="binary-row">
+                        <span class="binary-label">Maske</span>
+                        <span class="binary-value" id="bin-mask"></span>
+                    </div>
+                    <div class="binary-row">
+                        <span class="binary-label">Netz</span>
+                        <span class="binary-value" id="bin-network"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Geolocation (nur bei öffentlichen IPs) -->
+            <section class="card geo-card" id="geo-card" style="display:none;">
+                <div class="geo-header">
+                    <h3>Standort</h3>
+                    <span class="geo-loading" id="geo-loading">Suche...</span>
+                </div>
+                <div class="geo-content" id="geo-content">
+                    <div class="geo-flag" id="geo-flag"></div>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <span class="result-label">Land</span>
+                            <span class="result-value" id="geo-country"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Region</span>
+                            <span class="result-value" id="geo-region"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Stadt</span>
+                            <span class="result-value" id="geo-city"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Postleitzahl</span>
+                            <span class="result-value" id="geo-zip"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Zeitzone</span>
+                            <span class="result-value" id="geo-timezone"></span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">ISP</span>
+                            <span class="result-value" id="geo-isp"></span>
+                        </div>
+                        <div class="result-item full-width">
+                            <span class="result-label">Koordinaten</span>
+                            <span class="result-value" id="geo-coords"></span>
+                        </div>
+                    </div>
+                    <a class="map-link" id="geo-map-link" href="#" target="_blank" rel="noopener">Auf Karte anzeigen</a>
+                </div>
+                <div class="geo-error" id="geo-error" style="display:none;">
+                    <p id="geo-error-msg"></p>
+                </div>
+            </section>
+
+            <!-- Fehler -->
+            <section class="card error-card" id="error-card" style="display:none;">
+                <p id="error-msg"></p>
+            </section>
+        </main>
+
+        <footer>
+            <p>Installiere als App: Teilen &rarr; Zum Home-Bildschirm</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
