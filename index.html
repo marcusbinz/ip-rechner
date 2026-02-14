@@ -15,7 +15,13 @@
 <body>
     <div class="app">
         <header>
-            <h1>IP-Rechner</h1>
+            <div class="header-row">
+                <h1>IP-Rechner</h1>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Theme wechseln">
+                    <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+            </div>
             <p class="subtitle">IPv4 Subnetz-Rechner</p>
         </header>
 
@@ -90,6 +96,55 @@
                     <div class="binary-row">
                         <span class="binary-label">Netz</span>
                         <span class="binary-value" id="bin-network"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subnetz-Visualisierung -->
+            <section class="card viz-card" id="viz-card" style="display:none;">
+                <h3 class="viz-title">Subnetz-Visualisierung</h3>
+                <div class="viz-bar-container">
+                    <div class="viz-bar">
+                        <div class="viz-segment viz-net" id="viz-net">
+                            <span class="viz-seg-label">Netz</span>
+                        </div>
+                        <div class="viz-segment viz-first" id="viz-first">
+                            <span class="viz-seg-label">1. Host</span>
+                        </div>
+                        <div class="viz-segment viz-hosts" id="viz-hosts">
+                            <span class="viz-seg-label" id="viz-hosts-label">Hosts</span>
+                        </div>
+                        <div class="viz-segment viz-last" id="viz-last">
+                            <span class="viz-seg-label">Letzter</span>
+                        </div>
+                        <div class="viz-segment viz-broadcast" id="viz-broadcast">
+                            <span class="viz-seg-label">BC</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="viz-addresses">
+                    <span class="viz-addr viz-addr-left" id="viz-addr-start"></span>
+                    <span class="viz-addr viz-addr-right" id="viz-addr-end"></span>
+                </div>
+                <div class="viz-legend">
+                    <span class="viz-legend-item"><span class="viz-dot viz-dot-net"></span>Netzadresse</span>
+                    <span class="viz-legend-item"><span class="viz-dot viz-dot-hosts"></span>Nutzbare Hosts</span>
+                    <span class="viz-legend-item"><span class="viz-dot viz-dot-bc"></span>Broadcast</span>
+                </div>
+                <!-- Bit-Balken -->
+                <div class="viz-bits-section">
+                    <div class="viz-bits-label">32 Bits</div>
+                    <div class="viz-bits-bar">
+                        <div class="viz-bits-net" id="viz-bits-net">
+                            <span id="viz-bits-net-label"></span>
+                        </div>
+                        <div class="viz-bits-host" id="viz-bits-host">
+                            <span id="viz-bits-host-label"></span>
+                        </div>
+                    </div>
+                    <div class="viz-bits-labels">
+                        <span>Netz-Bits</span>
+                        <span>Host-Bits</span>
                     </div>
                 </div>
             </section>

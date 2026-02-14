@@ -163,8 +163,47 @@ function calculate() {
 
     resultCard.style.display = 'block';
 
+    // Subnet visualization
+    renderVisualization(networkInt, broadcastInt, cidr, hostCount);
+
     // Geolocation for public IPs
     lookupGeolocation(ip, classification.type);
+}
+
+// --- Subnet Visualization ---
+function renderVisualization(networkInt, broadcastInt, cidr, hostCount) {
+    const vizCard = document.getElementById('viz-card');
+    if (cidr > 30) {
+        vizCard.style.display = 'none';
+        return;
+    }
+    vizCard.style.display = 'block';
+
+    const totalAddresses = Math.pow(2, 32 - cidr);
+
+    // Bar segments: network(1) + firstHost(1) + middleHosts + lastHost(1) + broadcast(1)
+    const netPct = (1 / totalAddresses) * 100;
+    const bcPct = (1 / totalAddresses) * 100;
+    const firstPct = (1 / totalAddresses) * 100;
+    const lastPct = (1 / totalAddresses) * 100;
+    const hostsPct = Math.max(0, 100 - netPct - bcPct - firstPct - lastPct);
+
+    document.getElementById('viz-net').style.width = `${Math.max(netPct, 3)}%`;
+    document.getElementById('viz-first').style.width = `${Math.max(firstPct, 5)}%`;
+    document.getElementById('viz-hosts').style.width = `${Math.max(hostsPct, 10)}%`;
+    document.getElementById('viz-last').style.width = `${Math.max(lastPct, 5)}%`;
+    document.getElementById('viz-broadcast').style.width = `${Math.max(bcPct, 3)}%`;
+
+    document.getElementById('viz-hosts-label').textContent = `${hostCount.toLocaleString('de-DE')} Hosts`;
+    document.getElementById('viz-addr-start').textContent = intToIP(networkInt);
+    document.getElementById('viz-addr-end').textContent = intToIP(broadcastInt);
+
+    // Bit bar
+    const netBitsPct = (cidr / 32) * 100;
+    document.getElementById('viz-bits-net').style.width = `${netBitsPct}%`;
+    document.getElementById('viz-bits-host').style.width = `${100 - netBitsPct}%`;
+    document.getElementById('viz-bits-net-label').textContent = `${cidr}`;
+    document.getElementById('viz-bits-host-label').textContent = `${32 - cidr}`;
 }
 
 // --- Geolocation ---
@@ -270,6 +309,27 @@ ipInput.addEventListener('input', () => {
         }
     }
     calculate();
+});
+
+// --- Theme Toggle ---
+const themeToggle = document.getElementById('theme-toggle');
+const root = document.documentElement;
+
+function setTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    localStorage.setItem('ip-rechner-theme', theme);
+    // Update meta theme-color
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = theme === 'light' ? '#f1f5f9' : '#0f172a';
+}
+
+// Load saved theme
+const savedTheme = localStorage.getItem('ip-rechner-theme') || 'dark';
+setTheme(savedTheme);
+
+themeToggle.addEventListener('click', () => {
+    const current = root.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
 });
 
 // --- Init ---
