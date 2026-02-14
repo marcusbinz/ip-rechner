@@ -317,13 +317,26 @@ myIpBtn.addEventListener('click', () => {
     myIpBtn.disabled = true;
     myIpBtn.textContent = 'Ermittle...';
 
+    // Fetch IPv4 explicitly (ipapi.co may return IPv6 otherwise)
     fetch('https://ipapi.co/json/')
         .then(res => res.json())
         .then(data => {
-            if (data.ip) {
-                ipInput.value = data.ip;
+            let ip = data.ip;
+            // If we got an IPv6, try to get IPv4 via alternative endpoint
+            if (ip && ip.includes(':')) {
+                return fetch('https://api.ipify.org?format=json')
+                    .then(r => r.json())
+                    .then(d => d.ip);
+            }
+            return ip;
+        })
+        .then(ip => {
+            if (ip && !ip.includes(':')) {
+                ipInput.value = ip;
                 cidrSelect.value = 24;
                 calculate();
+            } else {
+                myIpBtn.textContent = 'Nur IPv6 verfügbar — IPv4 nicht gefunden';
             }
         })
         .catch(() => {
