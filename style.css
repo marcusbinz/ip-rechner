@@ -590,9 +590,16 @@ footer {
     padding: 16px 0 24px;
 }
 
-footer p {
+footer .footer-install {
     font-size: 12px;
     color: var(--text-dim);
+}
+
+footer .footer-copyright {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    opacity: 0.7;
 }
 
 /* Light mode badge adjustments */
